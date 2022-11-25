@@ -1,0 +1,10 @@
+[
+  {
+    "name" : "ALT FM",
+    "stream" : "http://asculta.radiocnm.ro:8002/live"
+  },
+  {
+    "name": "Vocea Crestinilor",
+    "stream": "https://listen.radioking.com/radio/494884/stream/551902"
+  }
+]

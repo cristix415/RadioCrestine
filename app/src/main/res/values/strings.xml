@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Radio</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">RADIO CRESTINE</string>
+    <string name="nav_header_subtitle">cristix415@gmail.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Setari</string>
+
+    <string name="menu_home">Lista radio</string>
+    <string name="menu_gallery">Favorite</string>
+    <string name="menu_slideshow">Contact</string>
+
+    <string name="no_stream">Nu se poate reda!</string>
+    <string name="live_broadcast">Radio Live </string>
+</resources>
