@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -150,7 +152,7 @@ public class RadioService extends Service implements Player.Listener, AudioManag
         super.onCreate();
         Log.e("onCreate", "status");
         strAppName = getResources().getString(R.string.app_name);
-        strLiveBroadcast = getResources().getString(R.string.live_broadcast);
+      //  strLiveBroadcast = getResources().getString(R.string.live_broadcast);
 
         onGoingCall = false;
 
@@ -164,12 +166,15 @@ public class RadioService extends Service implements Player.Listener, AudioManag
         mediaSession = new MediaSessionCompat(this, getClass().getSimpleName());
         transportControls = mediaSession.getController().getTransportControls();
         mediaSession.setActive(true);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_pause_black);
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mediaSession.setMetadata(new MediaMetadataCompat.Builder()
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "...")
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, strAppName)
+
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "Artist")
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, "Album")
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, strLiveBroadcast)
                 .build());
+
         mediaSession.setCallback(mediasSessionCallback);
 
         telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -382,10 +387,9 @@ public class RadioService extends Service implements Player.Listener, AudioManag
         //     .createMediaSource(Uri.parse(streamUrl));
         MediaItem mediaItem = MediaItem.fromUri(streamUrl);
         exoPlayer.setMediaItem(mediaItem);
-        Log.e("inainte", "preparing");
         exoPlayer.prepare();
         exoPlayer.setPlayWhenReady(true);
-        Log.e("dupa", "prepared");
+
     }
 
     public void resume() {

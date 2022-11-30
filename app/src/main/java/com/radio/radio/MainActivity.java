@@ -79,9 +79,9 @@ public class MainActivity extends AppCompatActivity {
         subPlayer = contentView.findViewById(R.id.sub_player);
         listView = contentView.findViewById(R.id.listview);
         trigger = contentView.findViewById(R.id.playTrigger);
-        if (listView != null)
-            Log.e("listview","not null");
-        Log.e("trigger dupaaaaaaaa","trrrrrrrrrrrrrr");
+       // if (listView != null)
+          //  Log.e("listview","not null");
+        //Log.e("trigger dupaaaaaaaa","trrrrrrrrrrrrrr");
         trigger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,12 +149,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void onEvent(String status){
-        Log.e("onEvent", status);
     //    subPlayer.setVisibility(View.VISIBLE);
         switch (status){
 
             case PlaybackStatus.LOADING:
-                Log.e("loading", status);
                 trigger.setImageResource(R.drawable.ic_loa);
 
                 break;
@@ -171,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
                         : R.drawable.ic_play_arrow_black);*/
                 break;
             case  PlaybackStatus.PLAY:
-                Log.e("daaaaaaaaaaaaaaaa", status);
                 trigger.setImageResource(R.drawable.ic_pause_black);
                 break;
 

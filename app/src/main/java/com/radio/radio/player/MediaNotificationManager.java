@@ -1,5 +1,8 @@
 package com.radio.radio.player;
 
+import static com.google.common.reflect.Reflection.getPackageName;
+
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,6 +12,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 
 
@@ -16,8 +20,11 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.google.android.exoplayer2.util.Log;
+import com.radio.radio.BuildConfig;
 import com.radio.radio.MainActivity;
 import com.radio.radio.R;
+
+import java.io.InputStream;
 
 public class MediaNotificationManager {
 
@@ -46,13 +53,26 @@ public class MediaNotificationManager {
         notificationManager = NotificationManagerCompat.from(service);
     }
 
+
     public void startNotify(String playbackStatus) {
         notificationManager.cancel(NOTIFICATION_ID);
 c++;
-
-      //  Log.e("start notify", service.shoutcast.getName() + "  " + String.valueOf(c));
         strLiveBroadcast = service.shoutcast.getName();
-        Bitmap largeIcon = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher);
+        String imageName =  service.shoutcast.getIcon();
+        InputStream imageInputStream = null;
+        try {
+
+              imageInputStream = resources.getAssets().open(imageName);
+
+        }
+        catch (Exception ex)
+        {
+            Log.e( "eroare",  ex.getMessage().toString());
+        }
+
+                //;BuildConfig.APPLICATION_ID +  "/drawable/" + service.shoutcast.getIcon();
+       // Log.e( String.valueOf(imageUrl),  imageUrl + String.valueOf(c));
+        Bitmap largeIcon = BitmapFactory.decodeStream(imageInputStream);
 
         int icon = R.drawable.ic_pause_white;
         Intent playbackAction = new Intent(service, RadioService.class);
@@ -103,6 +123,7 @@ c++;
                         .setShowActionsInCompactView(0, 1)
                         .setShowCancelButton(true)
                         .setCancelButtonIntent(stopAction));
+
 
         service.startForeground(NOTIFICATION_ID, builder.build());
     }

@@ -8,9 +8,13 @@ public class Shoutcast {
 
     @SerializedName("stream")
     private String url;
+    private String icon;
 
     public String getName() {
         return name;
+    }
+    public String getIcon() {
+        return icon;
     }
 
     public void setName(String name) {

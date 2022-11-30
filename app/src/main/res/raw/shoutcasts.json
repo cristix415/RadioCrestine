@@ -1,10 +1,12 @@
 [
   {
     "name" : "ALT FM",
-    "stream" : "http://asculta.radiocnm.ro:8002/live"
+    "stream" : "http://asculta.radiocnm.ro:8002/live",
+    "icon" : "bg_altfm.png"
   },
   {
     "name": "Vocea Crestinilor",
-    "stream": "https://listen.radioking.com/radio/494884/stream/551902"
+    "stream": "https://listen.radioking.com/radio/494884/stream/551902",
+    "icon" : "bg_voceacrestinilor.png"
   }
 ]
