@@ -7,6 +7,7 @@ public class PlaybackStatus {
     public static final String LOADING = "PlaybackStatus_LOADING";
 
     public static final String PLAYING = "PlaybackStatus_PLAYING";
+    public static final String PLAY = "PlaybackStatus_PLAY";
 
     public static final String PAUSED = "PlaybackStatus_PAUSED";
 

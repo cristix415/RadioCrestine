@@ -11,9 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
@@ -105,17 +102,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-/*
-        StyledPlayerView playerView = findViewById(R.id.player_view);
-        // Instantiate the player.
-        ExoPlayer player = new ExoPlayer.Builder(getApplicationContext()).build();
-// Attach player to the view.
-        playerView.setPlayer(player);
-// Set the media item to be played.
-        MediaItem mediaItem = MediaItem.fromUri("https://listen.radioking.com/radio/494884/stream/551902");
-        player.setMediaItem(mediaItem);
-// Prepare the player.
-        player.prepare();*/
      //   radioManager.playOrPause("http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p");
     }
  public void RefreshCelelalte(){
@@ -178,12 +164,15 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.no_stream, Toast.LENGTH_SHORT).show();
 
                 break;
-            case PlaybackStatus.PLAYING:
-                trigger.setImageResource( R.drawable.ic_pause_black);
-                Log.e("PPPPPLAYYYYYYYY", status);
+            case PlaybackStatus.PAUSED:
+                trigger.setImageResource( R.drawable.ic_play_arrow_black);
                 /*trigger.setImageResource(status.equals(PlaybackStatus.PLAYING)
                         ? R.drawable.ic_pause_black
                         : R.drawable.ic_play_arrow_black);*/
+                break;
+            case  PlaybackStatus.PLAY:
+                Log.e("daaaaaaaaaaaaaaaa", status);
+                trigger.setImageResource(R.drawable.ic_pause_black);
                 break;
 
 

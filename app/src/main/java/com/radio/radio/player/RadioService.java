@@ -67,13 +67,13 @@ public class RadioService extends Service implements Player.Listener, AudioManag
     private AudioManager audioManager;
 
     private MediaNotificationManager notificationManager;
-public View subPlayer;
+    public View subPlayer;
     private String status;
 
     private String strAppName;
     private String strLiveBroadcast;
     private String streamUrl;
-    public Shoutcast  shoutcast;
+    public Shoutcast shoutcast;
 
     public class LocalBinder extends Binder {
         public RadioService getService() {
@@ -95,17 +95,17 @@ public View subPlayer;
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
 
-            if(state == TelephonyManager.CALL_STATE_OFFHOOK
-                    || state == TelephonyManager.CALL_STATE_RINGING){
+            if (state == TelephonyManager.CALL_STATE_OFFHOOK
+                    || state == TelephonyManager.CALL_STATE_RINGING) {
 
-                if(!isPlaying()) return;
+                if (!isPlaying()) return;
 
                 onGoingCall = true;
                 stop();
 
-            } else if (state == TelephonyManager.CALL_STATE_IDLE){
+            } else if (state == TelephonyManager.CALL_STATE_IDLE) {
 
-                if(!onGoingCall) return;
+                if (!onGoingCall) return;
 
                 onGoingCall = false;
                 resume();
@@ -148,7 +148,7 @@ public View subPlayer;
     @Override
     public void onCreate() {
         super.onCreate();
-
+        Log.e("onCreate", "status");
         strAppName = getResources().getString(R.string.app_name);
         strLiveBroadcast = getResources().getString(R.string.live_broadcast);
 
@@ -173,13 +173,13 @@ public View subPlayer;
         mediaSession.setCallback(mediasSessionCallback);
 
         telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-      //  telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        //  telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 
         handler = new Handler();
         DefaultBandwidthMeter.Builder bandwidthMeter = new DefaultBandwidthMeter.Builder(this);
-        AdaptiveTrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory(0,0,0,0);
-        DefaultTrackSelector trackSelector = new DefaultTrackSelector(this,trackSelectionFactory);
-     //   exoPlayer = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector);
+        AdaptiveTrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory(0, 0, 0, 0);
+        DefaultTrackSelector trackSelector = new DefaultTrackSelector(this, trackSelectionFactory);
+        //   exoPlayer = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector);
         exoPlayer = new ExoPlayer.Builder(getApplicationContext()).build();
         exoPlayer.addListener(this);
 
@@ -190,29 +190,29 @@ public View subPlayer;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        Log.e("onStartCommand", "status");
         String action = intent.getAction();
 
-        if(TextUtils.isEmpty(action))
+        if (TextUtils.isEmpty(action))
             return START_NOT_STICKY;
 
         int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        if(result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED){
+        if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 
             stop();
 
             return START_NOT_STICKY;
         }
 
-        if(action.equalsIgnoreCase(ACTION_PLAY)){
+        if (action.equalsIgnoreCase(ACTION_PLAY)) {
 
             transportControls.play();
 
-        } else if(action.equalsIgnoreCase(ACTION_PAUSE)) {
+        } else if (action.equalsIgnoreCase(ACTION_PAUSE)) {
 
             transportControls.pause();
 
-        } else if(action.equalsIgnoreCase(ACTION_STOP)){
+        } else if (action.equalsIgnoreCase(ACTION_STOP)) {
 
             transportControls.stop();
 
@@ -223,8 +223,8 @@ public View subPlayer;
 
     @Override
     public boolean onUnbind(Intent intent) {
-
-        if(status.equals(PlaybackStatus.IDLE))
+        Log.e("onUnbind", "status");
+        if (status.equals(PlaybackStatus.IDLE))
             stopSelf();
 
         return super.onUnbind(intent);
@@ -232,7 +232,7 @@ public View subPlayer;
 
     @Override
     public void onRebind(final Intent intent) {
-
+        Log.e("onRebind", "status");
     }
 
     @Override
@@ -243,7 +243,7 @@ public View subPlayer;
         exoPlayer.release();
         exoPlayer.removeListener(this);
 
-        if(telephonyManager != null)
+        if (telephonyManager != null)
             telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
 
         notificationManager.cancelNotify();
@@ -257,7 +257,7 @@ public View subPlayer;
 
     @Override
     public void onAudioFocusChange(int focusChange) {
-
+        Log.e("onAudioFocusChange", "status");
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
 
@@ -290,10 +290,9 @@ public View subPlayer;
     }
 
 
-
-
     @Override
     public void onPlaybackStateChanged(int playbackState) {
+
         Player.Listener.super.onPlaybackStateChanged(playbackState);
         switch (playbackState) {
             case Player.STATE_BUFFERING:
@@ -307,14 +306,17 @@ public View subPlayer;
                 break;
 
         }
+        if (status.equals(PlaybackStatus.PLAYING)) {
+            Log.e("playyyyyyyyyyyyyyyyyyyyyy", status);
+            EventBus.getDefault().post(PlaybackStatus.PLAY);
+        }
+        if (!status.equals(PlaybackStatus.IDLE) && !status.equals(PlaybackStatus.PLAYING)) {
 
-        if(!status.equals(PlaybackStatus.IDLE) && !status.equals(PlaybackStatus.PLAYING)) {
-            Log.e("onPlaybackStateChanged", status);
             notificationManager.startNotify(status);
             EventBus.getDefault().post(status);
         }
 
-     //
+        //
 
     }
 
@@ -324,21 +326,16 @@ public View subPlayer;
         Log.e("onPlayWhenReadyChanged 1 ", status);
         status = playWhenReady ? PlaybackStatus.PLAYING : PlaybackStatus.PAUSED;
         Log.e("onPlayWhenReadyChanged 2", status);
-            notificationManager.startNotify(status);
+        notificationManager.startNotify(status);
 
         EventBus.getDefault().post(status);
     }
-
-
-
-
 
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
 
     }
-
 
 
     @Override
@@ -380,25 +377,25 @@ public View subPlayer;
 
         DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(this, getUserAgent(), BANDWIDTH_METER);
 
-       // ExtractorMediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory)
-         //       .setExtractorsFactory(new DefaultExtractorsFactory())
-           //     .createMediaSource(Uri.parse(streamUrl));
+        // ExtractorMediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+        //       .setExtractorsFactory(new DefaultExtractorsFactory())
+        //     .createMediaSource(Uri.parse(streamUrl));
         MediaItem mediaItem = MediaItem.fromUri(streamUrl);
         exoPlayer.setMediaItem(mediaItem);
-        Log.e("inainte", "status");
+        Log.e("inainte", "preparing");
         exoPlayer.prepare();
         exoPlayer.setPlayWhenReady(true);
-        Log.e("dupa", "status");
+        Log.e("dupa", "prepared");
     }
 
     public void resume() {
-
-        if(streamUrl != null)
+        Log.e("METODA", "resume");
+        if (streamUrl != null)
             play(streamUrl);
     }
 
     public void pause() {
-
+        Log.e("metoda", "PAUSE");
         exoPlayer.setPlayWhenReady(false);
 
         audioManager.abandonAudioFocus(this);
@@ -406,19 +403,19 @@ public View subPlayer;
     }
 
     public void stop() {
-
+        Log.e("metoda", "STOP");
         exoPlayer.stop();
 
         audioManager.abandonAudioFocus(this);
         wifiLockRelease();
     }
 
-    public void playOrPause(Shoutcast shoutcast){
+    public void playOrPause(Shoutcast shoutcast) {
 
         this.shoutcast = shoutcast;
-        if(streamUrl != null && streamUrl.equals(shoutcast.getUrl())){
+        if (streamUrl != null && streamUrl.equals(shoutcast.getUrl())) {
 
-            if(!isPlaying()){
+            if (!isPlaying()) {
 
                 play(streamUrl);
 
@@ -429,7 +426,7 @@ public View subPlayer;
 
         } else {
 
-            if(isPlaying()){
+            if (isPlaying()) {
 
                 pause();
 
@@ -439,22 +436,22 @@ public View subPlayer;
         }
     }
 
-    public String getStatus(){
+    public String getStatus() {
 
         return status;
     }
 
-    public MediaSessionCompat getMediaSession(){
-
+    public MediaSessionCompat getMediaSession() {
+        Log.e("metoda", "getMediaSession");
         return mediaSession;
     }
 
-    public boolean isPlaying(){
+    public boolean isPlaying() {
 
         return this.status.equals(PlaybackStatus.PLAYING);
     }
 
-    private void wifiLockRelease(){
+    private void wifiLockRelease() {
 
         if (wifiLock != null && wifiLock.isHeld()) {
 
@@ -462,7 +459,7 @@ public View subPlayer;
         }
     }
 
-    private String getUserAgent(){
+    private String getUserAgent() {
 
         return Util.getUserAgent(this, getClass().getSimpleName());
     }
